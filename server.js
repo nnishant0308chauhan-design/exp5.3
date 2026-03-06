@@ -23,16 +23,6 @@ const products = [
     reviews: [
       { userId: "u2", rating: 4, comment: "Good quality" }
     ]
-  },
-  {
-    name: "Outdoor Speakers",
-    category: "Electronic",
-    variants: [
-      { sku: "96765-B", color: "Black", price: 35.99, stock: 2 }
-    ],
-    reviews: [
-      { userId: "u3", rating: 3, comment: "Average sound" }
-    ]
   }
 ];
 
@@ -56,41 +46,6 @@ app.get("/low-stock", (req, res) => {
   });
 
   res.json(lowStock);
-});
-
-app.get("/category-ratings", (req, res) => {
-
-  const categoryMap = {};
-
-  products.forEach(p => {
-
-    const ratings = p.reviews.map(r => r.rating);
-
-    if (!categoryMap[p.category]) {
-      categoryMap[p.category] = [];
-    }
-
-    categoryMap[p.category].push(...ratings);
-
-  });
-
-  const result = [];
-
-  for (let cat in categoryMap) {
-
-    const arr = categoryMap[cat];
-
-    const avg = arr.reduce((a,b)=>a+b,0)/arr.length;
-
-    result.push({
-      category: cat,
-      avgRating: avg.toFixed(2)
-    });
-
-  }
-
-  res.json(result);
-
 });
 
 const PORT = process.env.PORT || 3000;
