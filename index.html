@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>E-commerce Catalog</title>
+
+<script src="https://unpkg.com/react@17/umd/react.development.js"></script>
+<script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+
+<style>
+
+body{
+font-family:Arial;
+background:linear-gradient(135deg,#74ebd5,#ACB6E5);
+padding:30px;
+}
+
+.container{
+max-width:800px;
+margin:auto;
+background:white;
+padding:25px;
+border-radius:12px;
+box-shadow:0 8px 20px rgba(0,0,0,0.2);
+}
+
+h1{
+color:#333;
+}
+
+.variant{
+background:#f7f9fc;
+padding:12px;
+margin-top:10px;
+border-radius:8px;
+border-left:5px solid #6c63ff;
+}
+
+.review{
+background:#f1f5ff;
+padding:10px;
+margin-top:8px;
+border-radius:6px;
+}
+
+button{
+padding:8px 14px;
+margin-top:6px;
+border:none;
+border-radius:6px;
+cursor:pointer;
+font-weight:bold;
+}
+
+.buyBtn{
+background:#6c63ff;
+color:white;
+}
+
+.buyBtn:hover{
+background:#574fd6;
+}
+
+.reviewBtn{
+background:#00b894;
+color:white;
+margin-top:15px;
+}
+
+.reviewBtn:hover{
+background:#019875;
+}
+
+.stockLow{
+color:#e67e22;
+font-weight:bold;
+}
+
+.stockOut{
+color:red;
+font-weight:bold;
+}
+
+.star{
+color:#f1c40f;
+font-size:18px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div id="root"></div>
+
+<script>
+
+const e = React.createElement;
+
+function App(){
+
+const [product,setProduct] = React.useState({
+
+name:"Premium Headphones",
+category:"Electronics",
+
+variants:[
+{
+sku:"HP-BL-001",
+color:"Black",
+price:199.99,
+stock:15
+},
+{
+sku:"HP-WH-001",
+color:"White",
+price:209.99,
+stock:8
+}
+],
+
+reviews:[
+{
+userId:"User101",
+rating:5,
+comment:"Excellent sound quality"
+}
+],
+
+avgRating:5
+
+});
+
+function updateStock(index){
+
+let updated={...product};
+
+if(updated.variants[index].stock<=0){
+alert("Out of stock!");
+return;
+}
+
+updated.variants[index].stock--;
+
+setProduct({...updated});
+
+}
+
+function addReview(){
+
+let rating=prompt("Enter rating (1-5)");
+let comment=prompt("Enter comment");
+
+if(!rating || rating<1 || rating>5){
+alert("Rating must be between 1 and 5");
+return;
+}
+
+let updated={...product};
+
+updated.reviews.push({
+
+userId:"User"+Math.floor(Math.random()*1000),
+rating:Number(rating),
+comment:comment
+
+});
+
+let avg = updated.reviews.reduce((a,b)=>a+b.rating,0) / updated.reviews.length;
+
+updated.avgRating = avg.toFixed(1);
+
+setProduct({...updated});
+
+}
+
+function showStars(num){
+
+let stars="";
+for(let i=0;i<num;i++){
+stars+="⭐";
+}
+return stars;
+
+}
+
+return e("div",{className:"container"},
+
+e("h1",null,product.name),
+
+e("p",null,"Category: "+product.category),
+
+e("h3",null,"Variants"),
+
+product.variants.map((v,i)=>
+
+e("div",{className:"variant",key:v.sku},
+
+e("p",null,"SKU: "+v.sku),
+e("p",null,"Color: "+v.color),
+e("p",null,"Price: $"+v.price),
+
+e("p",null,
+"Stock: "+v.stock,
+v.stock===0 ? e("span",{className:"stockOut"}," (Out of Stock)") :
+v.stock<=5 ? e("span",{className:"stockLow"}," (Low Stock)") : ""
+),
+
+e("button",{className:"buyBtn",onClick:()=>updateStock(i)},"Buy")
+
+)
+
+),
+
+e("h3",null,"Reviews"),
+
+product.reviews.map((r,i)=>
+
+e("div",{className:"review",key:i},
+
+e("p",null,"User: "+r.userId),
+e("p",{className:"star"},showStars(r.rating)),
+e("p",null,r.comment)
+
+)
+
+),
+
+e("h3",null,"Average Rating: ⭐ "+product.avgRating),
+
+e("button",{className:"reviewBtn",onClick:addReview},"Add Review")
+
+);
+
+}
+
+ReactDOM.render(e(App),document.getElementById("root"));
+
+</script>
+
+</body>
+</html>
